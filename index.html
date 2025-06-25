@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>កម្មវិធីគ្រប់គ្រងការខ្ចីកុំព្យូទ័រ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-600">ប្រព័ន្ធគ្រប់គ្រងការខ្ចី និងប្រើប្រាស់កុំព្យូទ័រ</h1>
+            <p class="text-gray-600 mt-2">សូមស្វាគមន៍! គ្រប់គ្រងការខ្ចី-សង, ទីតាំង និងបង្កើតសាររំលឹកជាមួយ ✨ AI។</p>
+            <div class="mt-4 text-sm text-gray-500">
+                <span>User ID: </span><span id="userId" class="font-mono bg-gray-200 px-2 py-1 rounded">Loading...</span>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Add Laptop Section -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-blue-700">បន្ថែម​កុំព្យូទ័រ​ថ្មី</h2>
+                <form id="add-laptop-form" class="space-y-4">
+                    <div>
+                        <label for="serial" class="block text-sm font-medium text-gray-700">លេខសម្គាល់ (Serial Number)</label>
+                        <input type="text" id="serial" name="serial" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="model" class="block text-sm font-medium text-gray-700">ម៉ូដែល (Model)</label>
+                        <input type="text" id="model" name="model" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-700">ទីតាំងដំបូង</label>
+                        <input type="text" id="location" name="location" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" value="ការិយាល័យ IT">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300">
+                        បញ្ចូលកុំព្យូទ័រ
+                    </button>
+                </form>
+            </div>
+
+            <!-- Laptop List Section -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-blue-700">បញ្ជីកុំព្យូទ័រទាំងអស់</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">លេខសម្គាល់</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ម៉ូដែល</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ទីតាំង</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ស្ថានភាព</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">សកម្មភាព</th>
+                            </tr>
+                        </thead>
+                        <tbody id="laptop-list" class="bg-white divide-y divide-gray-200">
+                            <!-- Laptop items will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Loan History Section -->
+            <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-md">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 class="text-2xl font-bold text-blue-700">ប្រវត្តិនៃការខ្ចី-សង</h2>
+                    <button id="download-report-btn" class="bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-300 flex items-center space-x-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        <span>ទាញយករបាយការណ៍</span>
+                    </button>
+                </div>
+                 <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">លេខសម្គាល់កុំព្យូទ័រ</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ឈ្មោះអ្នកខ្ចី</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ផ្នែក</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">កាលបរិច្ឆេទខ្ចី</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">កាលបរិច្ឆេទសង</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-list" class="bg-white divide-y divide-gray-200">
+                           <!-- History items will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="borrow-modal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden items-center justify-center z-20">
+        <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">ព័ត៌មានអ្នកខ្ចី</h3>
+            <form id="borrow-form"><input type="hidden" id="borrow-laptop-id"><div class="space-y-4"><div><label for="borrower-name" class="block text-sm font-medium text-gray-700">ឈ្មោះអ្នកខ្ចី</label><input type="text" id="borrower-name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div><div><label for="department" class="block text-sm font-medium text-gray-700">ផ្នែក/ដេប៉ាតឺម៉ង់ (ទីតាំងថ្មី)</label><input type="text" id="department" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div></div><div class="mt-6 flex justify-end space-x-3"><button type="button" id="cancel-borrow" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">បោះបង់</button><button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">បញ្ជាក់ការខ្ចី</button></div></form>
+        </div>
+    </div>
+    <div id="location-modal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden items-center justify-center z-20">
+        <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">កែសម្រួលទីតាំងកុំព្យូទ័រ</h3>
+            <form id="location-form"><input type="hidden" id="location-laptop-id"><div><label for="new-location" class="block text-sm font-medium text-gray-700">ទីតាំងថ្មី</label><input type="text" id="new-location" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div><div class="mt-6 flex justify-end space-x-3"><button type="button" id="cancel-location" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">បោះបង់</button><button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">រក្សាទុក</button></div></form>
+        </div>
+    </div>
+    <div id="reminder-modal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden items-center justify-center z-30">
+        <div class="relative mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">✨ សាររំលឹកបង្កើតដោយ AI</h3>
+            <div id="reminder-content" class="min-h-[200px] flex items-center justify-center">
+                <div class="loader"></div>
+            </div>
+            <textarea id="reminder-text" class="hidden mt-2 w-full p-2 border border-gray-300 rounded-md min-h-[200px]"></textarea>
+            <div class="mt-4 flex justify-end space-x-3">
+                <button type="button" id="copy-reminder" class="hidden bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600">ចម្លងសារ</button>
+                <button type="button" id="close-reminder" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">បិទ</button>
+            </div>
+        </div>
+    </div>
+    <div id="message-box" class="modal fixed top-5 right-5 bg-blue-500 text-white py-3 px-5 rounded-lg shadow-xl hidden animate-pulse z-50">
+        <p id="message-text"></p>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, addDoc, onSnapshot, updateDoc, serverTimestamp, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Configuration and Initialization ---
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-laptop-loan-app';
+        let app, db, auth, userId, laptopsCollection, historyCollection;
+        let isAuthReady = false;
+        
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (e) {
+            console.error("Error initializing Firebase:", e);
+            showMessage("Initialization Error!", true);
+        }
+
+        // --- Authentication ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                document.getElementById('userId').textContent = userId;
+                // **FIX**: Set auth ready flag BEFORE attaching listeners
+                isAuthReady = true; 
+                setupFirestoreCollections();
+                attachListeners();
+            } else {
+                 try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Authentication failed:", error);
+                    showMessage("Authentication Failed!", true);
+                }
+            }
+        });
+
+        function setupFirestoreCollections() {
+             if(!db || !userId) return;
+             laptopsCollection = collection(db, "artifacts", appId, "users", userId, "laptops");
+             historyCollection = collection(db, "artifacts", appId, "users", userId, "loan_history");
+        }
+        
+        // --- UI Elements ---
+        const laptopList = document.getElementById('laptop-list');
+        const historyList = document.getElementById('history-list');
+        const reminderModal = document.getElementById('reminder-modal');
+
+        // --- Utility Functions ---
+        function showMessage(message, isError = false) {
+            const messageBox = document.getElementById('message-box');
+            const messageText = document.getElementById('message-text');
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-blue-500', 'bg-red-500');
+            messageBox.classList.add(isError ? 'bg-red-500' : 'bg-blue-500');
+            setTimeout(() => { messageBox.classList.add('hidden'); }, 3000);
+        }
+
+        const formatDate = (timestamp) => {
+            if (!timestamp) return 'N/A';
+            return new Date(timestamp.seconds * 1000).toLocaleDateString('km-KH', { day: '2-digit', month: 'long', year: 'numeric' });
+        };
+
+        // --- Firestore Real-time Listeners ---
+        function attachListeners() {
+            // **FIX**: Guard clause to ensure everything is ready
+            if (!isAuthReady || !laptopsCollection || !historyCollection) {
+                console.log("Listeners not attached: Auth or collections not ready.");
+                return; 
+            }
+            console.log("Attaching listeners...");
+
+            onSnapshot(query(laptopsCollection), (snapshot) => {
+                laptopList.innerHTML = '';
+                if (snapshot.empty) {
+                     laptopList.innerHTML = `<tr><td colspan="5" class="text-center py-4">គ្មានកុំព្យូទ័រក្នុងបញ្ជីទេ។ សូមបន្ថែម...</td></tr>`;
+                } else {
+                    snapshot.docs.sort((a,b) => a.data().serial.localeCompare(b.data().serial))
+                    .forEach(doc => { renderLaptop(doc.id, doc.data()); });
+                }
+            }, (error) => {
+                console.error("Error listening to laptops collection:", error);
+                showMessage("មានបញ្ហាក្នុងការផ្ទុកបញ្ជីកុំព្យូទ័រ។", true);
+            });
+
+            onSnapshot(query(historyCollection), (snapshot) => {
+                historyList.innerHTML = '';
+                 if (snapshot.empty) {
+                     historyList.innerHTML = `<tr><td colspan="5" class="text-center py-4">មិនទាន់មានប្រវត្តិនៃការខ្ចីនៅឡើយទេ។</td></tr>`;
+                } else {
+                     snapshot.docs.sort((a, b) => b.data().borrowDate.seconds - a.data().borrowDate.seconds)
+                        .forEach(doc => { renderHistory(doc.data()); });
+                }
+            }, (error) => {
+                console.error("Error listening to history collection:", error);
+                showMessage("មានបញ្ហាក្នុងការផ្ទុកប្រវត្តិ។", true);
+            });
+        }
+
+        // --- Render Functions ---
+        function renderLaptop(id, data) {
+            const statusColors = {'Available': 'bg-green-100 text-green-800', 'Borrowed': 'bg-yellow-100 text-yellow-800'};
+            const tr = document.createElement('tr');
+            tr.dataset.id = id;
+            tr.dataset.serial = data.serial;
+            tr.dataset.model = data.model;
+
+            let actionButtons;
+            if (data.status === 'Available') {
+                actionButtons = `<button class="borrow-btn text-indigo-600 hover:text-indigo-900">ខ្ចី</button>`;
+            } else {
+                actionButtons = `<div class="flex items-center space-x-2"><button data-history-id="${data.borrowerInfo.historyId}" class="return-btn text-red-600 hover:text-red-900">សង</button><button class="generate-reminder-btn p-1 rounded-full hover:bg-blue-100 transition" title="បង្កើតសាររំលឹកដោយ AI"><span class="text-lg">✨</span></button></div>`;
+            }
+
+            tr.innerHTML = `<td class="px-6 py-4 whitespace-nowrap">${data.serial}</td><td class="px-6 py-4 whitespace-nowrap">${data.model}</td><td class="px-6 py-4 whitespace-nowrap"><span class="location-text">${data.location || 'N/A'}</span><button class="edit-location-btn ml-2 p-1 rounded-full hover:bg-gray-200 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536l12.232-12.232z" /></svg></button></td><td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColors[data.status] || 'bg-gray-100 text-gray-800'}">${data.status === 'Available' ? 'ទំនេរ' : `ខ្ចីដោយ៖ ${data.borrowerInfo.name}`}</span></td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${actionButtons}</td>`;
+            laptopList.appendChild(tr);
+        }
+        function renderHistory(data) {
+             const tr = document.createElement('tr');
+             tr.innerHTML = `<td class="px-6 py-4 whitespace-nowrap">${data.laptopSerial}</td><td class="px-6 py-4 whitespace-nowrap">${data.borrowerName}</td><td class="px-6 py-4 whitespace-nowrap">${data.department}</td><td class="px-6 py-4 whitespace-nowrap">${formatDate(data.borrowDate)}</td><td class="px-6 py-4 whitespace-nowrap">${data.returnDate ? formatDate(data.returnDate) : 'នៅ​ក្នុង​ការ​ខ្ចី'}</td>`;
+            historyList.appendChild(tr);
+        }
+
+        // --- GEMINI API CALL ---
+        async function generateReminderWithGemini(borrowerName, laptopModel, borrowDate) {
+            const prompt = `You are a helpful office administrator writing a message in the Khmer language. Write a polite, professional, and friendly reminder email to a colleague about a company laptop they have borrowed. Details: - Colleague's Name: ${borrowerName} - Laptop Model: ${laptopModel} - Date Borrowed: ${borrowDate}. Instructions: 1. Start with a polite greeting to ${borrowerName}. 2. Remind them that they borrowed the ${laptopModel} on ${borrowDate}. 3. Gently ask them to please return it to the IT Office when they have finished their work or if it's no longer needed. 4. End with a polite closing. 5. The entire response must be in Khmer language only.`;
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            try {
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { throw new Error(`API Error: ${response.statusText}`); }
+                const result = await response.json();
+                if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0]) {
+                    return result.candidates[0].content.parts[0].text;
+                } else { return "AI មិន​អាច​បង្កើត​សារ​បាន​ទេ​នៅ​ពេល​នេះ។"; }
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                return `មាន​បញ្ហា​ក្នុង​ការ​ភ្ជាប់​ទៅ AI: ${error.message}`;
+            }
+        }
+
+        // --- Event Handlers ---
+        document.getElementById('add-laptop-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!isAuthReady) { showMessage("ប្រព័ន្ធមិនទាន់រួចរាល់ទេ។", true); return; }
+            const form = e.target;
+            const serial = form.serial.value.trim();
+            const model = form.model.value.trim();
+            const location = form.location.value.trim();
+            if (!serial || !model || !location) { showMessage("សូមបំពេញគ្រប់ប្រអប់។", true); return; }
+            try {
+                await addDoc(laptopsCollection, { serial, model, location, status: 'Available', borrowerInfo: {}, createdAt: serverTimestamp() });
+                showMessage('បានបន្ថែម​កុំព្យូទ័រ​ថ្មីដោយជោគជ័យ!');
+                form.reset();
+            } catch (err) {
+                console.error("Error adding laptop:", err);
+                showMessage("ការបន្ថែមមានបញ្ហា។", true);
+            }
+        });
+
+        laptopList.addEventListener('click', async (e) => {
+            const target = e.target;
+            const parentRow = target.closest('tr');
+            if (!parentRow) return;
+            const laptopId = parentRow.dataset.id;
+            
+            if (target.closest('.borrow-btn')) {
+                document.getElementById('borrow-laptop-id').value = laptopId;
+                document.getElementById('borrow-modal').classList.add('flex');
+                document.getElementById('borrow-modal').classList.remove('hidden');
+            }
+            if (target.closest('.return-btn')) {
+                try {
+                    const historyId = target.closest('.return-btn').dataset.historyId;
+                    const laptopRef = doc(db, "artifacts", appId, "users", userId, "laptops", laptopId);
+                    await updateDoc(laptopRef, { status: 'Available', location: 'ការិយាល័យ IT', borrowerInfo: {} });
+                    if (historyId) {
+                        const historyRef = doc(db, "artifacts", appId, "users", userId, "loan_history", historyId);
+                        await updateDoc(historyRef, { returnDate: serverTimestamp() });
+                    }
+                    showMessage('បានទទួលកុំព្យូទ័រវិញដោយជោគជ័យ!');
+                } catch(err) {
+                    console.error("Error returning laptop:", err);
+                    showMessage("ការសងកុំព្យូទ័រមានបញ្ហា។", true);
+                }
+            }
+            if (target.closest('.edit-location-btn')) {
+                document.getElementById('location-laptop-id').value = laptopId;
+                document.getElementById('new-location').value = parentRow.querySelector('.location-text').textContent;
+                document.getElementById('location-modal').classList.add('flex');
+                document.getElementById('location-modal').classList.remove('hidden');
+            }
+            if (target.closest('.generate-reminder-btn')) {
+                reminderModal.classList.add('flex');
+                reminderModal.classList.remove('hidden');
+                const reminderContent = document.getElementById('reminder-content');
+                const reminderText = document.getElementById('reminder-text');
+                const copyBtn = document.getElementById('copy-reminder');
+                reminderContent.innerHTML = '<div class="loader"></div><p class="ml-4 text-gray-600">AI កំពុងបង្កើតសារ...</p>';
+                reminderText.classList.add('hidden');
+                copyBtn.classList.add('hidden');
+                try {
+                    const laptopDoc = await getDoc(doc(laptopsCollection, laptopId));
+                    const laptopData = laptopDoc.data();
+                    const historyDoc = await getDoc(doc(historyCollection, laptopData.borrowerInfo.historyId));
+                    const historyData = historyDoc.data();
+                    const generatedText = await generateReminderWithGemini(historyData.borrowerName, laptopData.model, formatDate(historyData.borrowDate));
+                    reminderContent.innerHTML = '';
+                    reminderText.value = generatedText;
+                    reminderText.classList.remove('hidden');
+                    copyBtn.classList.remove('hidden');
+                } catch(err) {
+                    console.error("Error getting data for reminder:", err);
+                    reminderContent.innerHTML = `<p class="text-red-500">មិនអាចទាញទិន្នន័យសម្រាប់បង្កើតសារបានទេ។</p>`;
+                }
+            }
+        });
+
+        // Modal close buttons
+        document.getElementById('cancel-borrow').addEventListener('click', () => document.getElementById('borrow-modal').classList.remove('flex', 'add', 'hidden'));
+        document.getElementById('cancel-location').addEventListener('click', () => document.getElementById('location-modal').classList.remove('flex', 'add', 'hidden'));
+        document.getElementById('close-reminder').addEventListener('click', () => document.getElementById('reminder-modal').classList.remove('flex', 'add', 'hidden'));
+        
+        // Modal form submissions
+        document.getElementById('borrow-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); if(!isAuthReady) return;
+            const form = e.target;
+            const laptopId = form['borrow-laptop-id'].value;
+            const borrowerName = form['borrower-name'].value.trim();
+            const department = form['department'].value.trim();
+            if(!borrowerName || !department) { showMessage("សូមបំពេញឈ្មោះ និងផ្នែក។", true); return; }
+            
+            try {
+                const laptopRow = laptopList.querySelector(`tr[data-id="${laptopId}"]`);
+                const historyRef = await addDoc(historyCollection, { laptopId, laptopSerial: laptopRow.dataset.serial, borrowerName, department, borrowDate: serverTimestamp(), returnDate: null });
+                await updateDoc(doc(laptopsCollection, laptopId), { status: 'Borrowed', location: department, borrowerInfo: { name: borrowerName, department: department, historyId: historyRef.id } });
+                showMessage('ការខ្ចីបានកត់ត្រាដោយជោគជ័យ!');
+                form.reset();
+                document.getElementById('borrow-modal').classList.remove('flex');
+                 document.getElementById('borrow-modal').classList.add('hidden');
+            } catch(err) {
+                console.error("Error submitting borrow form:", err);
+                showMessage("ការខ្ចីមានបញ្ហា។", true);
+            }
+        });
+        document.getElementById('location-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); if(!isAuthReady) return;
+            const form = e.target;
+            const laptopId = form['location-laptop-id'].value;
+            const newLocation = form['new-location'].value.trim();
+            if(!newLocation) { showMessage("ទីតាំងមិនអាចទទេបានទេ។", true); return; }
+            try {
+                await updateDoc(doc(laptopsCollection, laptopId), { location: newLocation });
+                showMessage('បានធ្វើបច្ចុប្បន្នភាពទីតាំងដោយជោគជ័យ!'); 
+                form.reset();
+                document.getElementById('location-modal').classList.remove('flex');
+                document.getElementById('location-modal').classList.add('hidden');
+            } catch(err) {
+                console.error("Error updating location:", err);
+                showMessage("ការកែប្រែទីតាំងមានបញ្ហា។", true);
+            }
+        });
+        document.getElementById('copy-reminder').addEventListener('click', () => {
+            const reminderText = document.getElementById('reminder-text');
+            reminderText.select();
+            document.execCommand('copy');
+            showMessage('បានចម្លងទៅកាន់ Clipboard!');
+        });
+
+        // Report download
+        document.getElementById('download-report-btn').addEventListener('click', async () => {
+             if (!isAuthReady || !historyCollection) { showMessage('ប្រព័ន្ធមិនទាន់រួចរាល់ទេ។', true); return; }
+             showMessage('កំពុងរៀបចំរបាយការណ៍...');
+             try {
+                const historySnapshot = await getDocs(query(historyCollection));
+                if (historySnapshot.empty) { showMessage('គ្មានទិន្នន័យប្រវត្តិដើម្បីទាញយកទេ។', true); return; }
+                const BOM = "\uFEFF";
+                const headers = ["លេខរៀង", "លេខសម្គាល់កុំព្យូទ័រ", "ម៉ូដែល", "ឈ្មោះអ្នកខ្ចី", "ផ្នែក", "កាលបរិច្ឆេទខ្ចី", "កាលបរិច្ឆេទសង"];
+                let csvRows = [headers.join(",")];
+                const laptopSnapshot = await getDocs(query(laptopsCollection));
+                const laptopModels = {};
+                laptopSnapshot.forEach(doc => { laptopModels[doc.data().serial] = doc.data().model });
+                const sortedDocs = historySnapshot.docs.sort((a, b) => b.data().borrowDate.seconds - a.data().borrowDate.seconds);
+                sortedDocs.forEach((doc, index) => {
+                    const data = doc.data();
+                    const rowData = [index + 1, data.laptopSerial, laptopModels[data.laptopSerial] || 'N/A', data.borrowerName, data.department, formatDate(data.borrowDate), data.returnDate ? formatDate(data.returnDate) : 'នៅ​ក្នុង​ការ​ខ្ចី'];
+                    csvRows.push(rowData.map(field => `"${String(field).replace(/"/g, '""')}"`).join(","));
+                });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(new Blob([BOM + csvRows.join("\r\n")], { type: 'text/csv;charset=utf-8;' }));
+                link.setAttribute("download", `loan_history_report_${new Date().toISOString().slice(0,10)}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showMessage('របាយការណ៍បានទាញយករួចរាល់ហើយ!');
+             } catch(err) {
+                console.error("Error generating report:", err);
+                showMessage("ការបង្កើតរបាយការណ៍មានបញ្ហា។", true);
+             }
+        });
+    </script>
+</body>
+</html>
